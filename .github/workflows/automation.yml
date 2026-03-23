@@ -1,0 +1,29 @@
+name: Run Automation Tests
+
+on:
+  schedule:
+    - cron: "0 19 * * *"   # Runs daily at 12:30 AM IST
+  workflow_dispatch:       # Manual run button
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Tests
+      env:
+        GOOGLE_CREDS: ${{ secrets.GOOGLE_CREDS }}
+      run: |
+        pytest
