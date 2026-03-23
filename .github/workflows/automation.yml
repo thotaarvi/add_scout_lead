@@ -26,6 +26,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
+
+    - name: Verify Chrome
+      run: |
+        which google-chrome
+        google-chrome --version
     
     - name: Install ChromeDriver
       run: |
