@@ -48,29 +48,25 @@ def test_valid_login(setup):
     worksheet, data = get_leads_data()
 
     for index, row in enumerate(data, start=2):
-        try:
-            leads.click_addleads_button()
 
-            leads.enter_firstname(row.get("firstname", ""))
-            leads.enter_lastname(row.get("lastname", ""))
-            leads.enter_companyname(row.get("company", ""))
-            leads.enter_emailname(row.get("email", ""))
-            leads.enter_websitename(row.get("website", ""))
+        leads.click_addleads_button()
 
-            leads.click_addlead()
-            leads.scout_lead()
-            toast_msg = leads.wait_for_toast()
+        leads.enter_firstname(row.get("firstname", ""))
+        leads.enter_lastname(row.get("lastname", ""))
+        leads.enter_companyname(row.get("company", ""))
+        leads.enter_emailname(row.get("email", ""))
+        leads.enter_websitename(row.get("website", ""))
 
-            if "scout completed" in toast_msg.lower():
-                status = "PASS"
+        leads.click_addlead()
+        leads.scout_lead()
+        toast_msg = leads.wait_for_toast()
 
-        except Exception as e:
+        if "scout completed" in toast_msg.lower():
+            status = "PASS"
+        else:
             status = "FAIL"
-            print(f"Error: {e}")
-
 
         exec_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
 
         worksheet.update_value(f"F{index}", status)
         worksheet.update_value(f"G{index}", exec_time)
