@@ -18,7 +18,8 @@ def get_leads_data():
     creds_json = base64.b64decode(creds_base64).decode("utf-8")
     creds_dict = json.loads(creds_json)
 
-    gc = pygsheets.authorize(service_account_json=creds_dict)
+    # ✅ FIXED LINE
+    gc = pygsheets.authorize(service_account_info=creds_dict)
 
     sh = gc.open("Leadaddsheet2")
     worksheet = sh.sheet1
@@ -41,10 +42,7 @@ def test_valid_login(setup):
 
     leads.click_leads()
 
-
     data = get_leads_data()
-
-
 
     for row in data:
         leads.click_addleads_button()
