@@ -2,7 +2,7 @@ from Pages.add_leadpage import Addlead
 from Pages.login_page import LoginPage
 from config.config import BASE_URL, USERNAME, PASSWORD
 import pygsheets
-import time
+from datetime import datetime
 import os
 import base64
 
@@ -25,7 +25,8 @@ def get_leads_data():
     sh = gc.open("Leadaddsheet2")
     worksheet = sh.sheet1
 
-    return worksheet.get_all_records()
+    data = worksheet.get_all_records()
+    return worksheet,data
 
 
 def test_valid_login(setup):
@@ -43,21 +44,31 @@ def test_valid_login(setup):
     leads.click_leads()
 
     # Fetch data
-    data = get_leads_data()
+    worksheet, data = get_leads_data()
 
-    for row in data:
-        leads.click_addleads_button()
+    for index, row in enumerate(data, start=2):
+        try:
+            leads.click_addleads_button()
 
-        leads.enter_firstname(row["firstname"])
-        leads.enter_lastname(row["lastname"])
-        leads.enter_companyname(row["company"])
-        leads.enter_emailname(row["email"])
-        leads.enter_websitename(row["website"])
+            leads.enter_firstname(row.get("firstname", ""))
+            leads.enter_lastname(row.get("lastname", ""))
+            leads.enter_companyname(row.get("company", ""))
+            leads.enter_emailname(row.get("email", ""))
+            leads.enter_websitename(row.get("website", ""))
 
-        leads.click_addlead()
-        time.sleep(3)
+            leads.click_addlead()
+            leads.scout_lead()
+            leads.wait_for_toast()
 
-        leads.scout_lead()
-        leads.wait_for_toast()
+            status = "PASS"
 
-        time.sleep(5)
+        except Exception as e:
+            status = "FAIL"
+            print(f"Error: {e}")
+
+
+        exec_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+        worksheet.update_value(f"F{index}", status)
+        worksheet.update_value(f"G{index}", exec_time)
