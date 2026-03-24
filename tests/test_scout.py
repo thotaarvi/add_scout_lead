@@ -20,7 +20,7 @@ def get_leads_data():
         f.write(base64.b64decode(creds_base64).decode("utf-8"))
 
     # Authorize
-    gc = pygsheets.authorize(service_file=file_path)
+    gc = pygsheets.authorize(service_account_file=file_path)
 
     sh = gc.open("Leadaddsheet2")
     worksheet = sh.sheet1
