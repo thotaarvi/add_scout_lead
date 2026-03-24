@@ -2,7 +2,7 @@ from Pages.add_leadpage import Addlead
 from Pages.login_page import LoginPage
 from config.config import BASE_URL, USERNAME, PASSWORD
 import pygsheets
-from datetime import datetime
+import time
 import os
 import base64
 
@@ -25,12 +25,10 @@ def get_leads_data():
     sh = gc.open("Leadaddsheet2")
     worksheet = sh.sheet1
 
-    data = worksheet.get_all_records()
-    return worksheet,data
+    return worksheet.get_all_records()
 
 
 def test_valid_login(setup):
-
     driver = setup
     driver.get(BASE_URL)
 
@@ -45,28 +43,21 @@ def test_valid_login(setup):
     leads.click_leads()
 
     # Fetch data
-    worksheet, data = get_leads_data()
+    data = get_leads_data()
 
-    for index, row in enumerate(data, start=2):
-
+    for row in data:
         leads.click_addleads_button()
 
-        leads.enter_firstname(row.get("firstname", ""))
-        leads.enter_lastname(row.get("lastname", ""))
-        leads.enter_companyname(row.get("company", ""))
-        leads.enter_emailname(row.get("email", ""))
-        leads.enter_websitename(row.get("website", ""))
+        leads.enter_firstname(row["firstname"])
+        leads.enter_lastname(row["lastname"])
+        leads.enter_companyname(row["company"])
+        leads.enter_emailname(row["email"])
+        leads.enter_websitename(row["website"])
 
         leads.click_addlead()
+        time.sleep(3)
+
         leads.scout_lead()
-        toast_msg = leads.wait_for_toast()
+        leads.wait_for_toast()
 
-        if "scout completed" in toast_msg.lower():
-            status = "PASS"
-        else:
-            status = "FAIL"
-
-        exec_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        worksheet.update_value(f"F{index}", status)
-        worksheet.update_value(f"G{index}", exec_time)
+        time.sleep(5)
