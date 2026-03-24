@@ -5,21 +5,22 @@ import pygsheets
 import time
 import os
 import base64
-import json
 
 
 def get_leads_data():
-
     creds_base64 = os.getenv("GOOGLE_CREDS")
 
     if not creds_base64:
         raise Exception("GOOGLE_CREDS environment variable not set")
 
-    creds_json = base64.b64decode(creds_base64).decode("utf-8")
-    creds_dict = json.loads(creds_json)
+    # Create JSON file dynamically
+    file_path = "service_account.json"
 
-    # ✅ FIXED LINE
-    gc = pygsheets.authorize(service_account_info=creds_dict)
+    with open(file_path, "w") as f:
+        f.write(base64.b64decode(creds_base64).decode("utf-8"))
+
+    # Authorize
+    gc = pygsheets.authorize(service_file=file_path)
 
     sh = gc.open("Leadaddsheet2")
     worksheet = sh.sheet1
@@ -28,20 +29,20 @@ def get_leads_data():
 
 
 def test_valid_login(setup):
-
     driver = setup
     driver.get(BASE_URL)
 
+    # Login
     login = LoginPage(driver)
-
     login.enter_username(USERNAME)
     login.enter_password(PASSWORD)
     login.click_login()
 
+    # Navigate
     leads = Addlead(driver)
-
     leads.click_leads()
 
+    # Fetch data
     data = get_leads_data()
 
     for row in data:
