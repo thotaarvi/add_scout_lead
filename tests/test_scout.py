@@ -30,6 +30,7 @@ def get_leads_data():
 
 
 def test_valid_login(setup):
+
     driver = setup
     driver.get(BASE_URL)
 
@@ -60,10 +61,8 @@ def test_valid_login(setup):
             leads.scout_lead()
             toast_msg = leads.wait_for_toast()
 
-            if "success" in toast_msg.lower():
+            if "scout completed" in toast_msg.lower():
                 status = "PASS"
-            else:
-                status = "FAIL"
 
         except Exception as e:
             status = "FAIL"
