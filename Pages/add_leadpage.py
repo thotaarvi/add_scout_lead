@@ -43,4 +43,6 @@ class Addlead:
         scout_btn.click()
 
     def wait_for_toast(self):
-        WebDriverWait(self.driver, 100).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(),'Scout Completed')]")))
+        wait = WebDriverWait(self.driver, 15)
+        toast = wait.until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(),'Scout Completed')]")))
+        return toast.text

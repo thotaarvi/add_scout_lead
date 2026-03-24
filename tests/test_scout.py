@@ -1,5 +1,3 @@
-import time
-
 from Pages.add_leadpage import Addlead
 from Pages.login_page import LoginPage
 from config.config import BASE_URL, USERNAME, PASSWORD
@@ -60,9 +58,12 @@ def test_valid_login(setup):
 
             leads.click_addlead()
             leads.scout_lead()
-            leads.wait_for_toast()
-            time.sleep(5)
-            status = "PASS"
+            toast_msg = leads.wait_for_toast()
+
+            if "success" in toast_msg.lower():
+                status = "PASS"
+            else:
+                status = "FAIL"
 
         except Exception as e:
             status = "FAIL"
